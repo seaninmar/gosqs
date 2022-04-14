@@ -167,7 +167,7 @@ func (c *consumer) Consume() {
 				m.MessageAttributes["route"] = &sqs.MessageAttributeValue{DataType: &t, StringValue: &v}
 			}
 
-			jobs <- newMessage(m)
+			jobs <- NewMessage(m)
 		}
 	}
 }

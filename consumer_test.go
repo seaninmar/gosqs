@@ -35,7 +35,7 @@ func retrieveMessage(t *testing.T, c *consumer) Message {
 		t.Fatalf("expected 1 message, got %d", len(output.Messages))
 	}
 
-	return newMessage(output.Messages[0])
+	return NewMessage(output.Messages[0])
 }
 
 func getConsumer(t *testing.T) *consumer {

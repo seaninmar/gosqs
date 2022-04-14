@@ -26,7 +26,7 @@ type message struct {
 	err chan error
 }
 
-func newMessage(m *sqs.Message) *message {
+func NewMessage(m *sqs.Message) *message {
 	return &message{m, make(chan error, 1)}
 }
 
