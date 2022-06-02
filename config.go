@@ -110,16 +110,21 @@ func (r retryer) MaxRetries() int {
 
 // newSession creates a new aws session
 func newSession(c Config) (*session.Session, error) {
-	//sets credentials
-	creds := credentials.NewStaticCredentials(c.Key, c.Secret, "")
-	_, err := creds.Get()
-	if err != nil {
-		return nil, ErrInvalidCreds.Context(err)
-	}
+	awsconfig := aws.NewConfig().WithRegion(c.Region)
 
+	//sets credentials if given (if not given, it's because there are other ways to
+	//authenticate a client to AWS, via ENV variables.)
+	if c.Key != "" && c.Secret != "" {
+		creds := credentials.NewStaticCredentials(c.Key, c.Secret, "")
+		_, err := creds.Get()
+		if err != nil {
+			return nil, ErrInvalidCreds.Context(err)
+		}
+		awsconfig = awsconfig.WithCredentials(creds)
+	}
 	r := &retryer{retryCount: c.RetryCount}
 
-	cfg := request.WithRetryer(aws.NewConfig().WithRegion(c.Region).WithCredentials(creds), r)
+	cfg := request.WithRetryer(awsconfig, r)
 
 	//if an optional hostname config is provided, then replace the default one
 	//
